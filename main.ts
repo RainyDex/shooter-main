@@ -29,7 +29,7 @@ function Bossarm () {
         laser2.setPosition(Bossarm2.x, Bossarm2.y)
         animation.runImageAnimation(
         laser2,
-        assets.animation`myAnim0`,
+        assets.animation`myAnimLaser`,
         100,
         false
         )
@@ -56,31 +56,12 @@ function myBoss2 () {
     )
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (gameMode == true) {
-        projectile = sprites.createProjectileFromSprite(assets.image`Fireball`, mySprite, 150, 0)
-        projectile.setPosition(mySprite.x + 25, mySprite.y)
-        animation.runImageAnimation(
-        projectile,
-        assets.animation`FirebalAnim`,
-        200,
-        true
-        )
-        music.play(music.createSoundEffect(WaveShape.Square, 1066, 1, 89, 0, 300, SoundExpressionEffect.Vibrato, InterpolationCurve.Curve), music.PlaybackMode.UntilDone)
-    }
+	
 })
 function Level3 () {
     currentLevel = 3
     scene.setBackgroundImage(assets.image`Level3`)
     gameMode = true
-}
-function Level1 () {
-    pause(1000)
-    color.clearFadeEffect()
-    gameMode = true
-    currentLevel = 1
-    scroller.scrollBackgroundWithSpeed(-60, 0)
-    scene.setBackgroundImage(assets.image`Level1`)
-    myPlayer()
 }
 function AnimationPlayerStationary () {
     animation.runImageAnimation(
@@ -109,10 +90,6 @@ function Level1_D () {
     currentLevel = 1.5
     info.setLife(3)
     scene.setBackgroundImage(assets.image`Level2`)
-    story.startCutscene(function () {
-        story.printCharacterText("More trash incomming!!", "Boss")
-        story.cancelAllCutscenes()
-    })
     pause(3000)
     Level2()
 }
@@ -122,6 +99,15 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite, ot
     music.play(music.melodyPlayable(music.bigCrash), music.PlaybackMode.InBackground)
     info.changeLifeBy(-1)
 })
+function myLevel1 () {
+    pause(1000)
+    color.clearFadeEffect()
+    gameMode = true
+    currentLevel = 1
+    scroller.scrollBackgroundWithSpeed(-60, 0)
+    scene.setBackgroundImage(assets.image`Level1`)
+    myPlayer()
+}
 info.onScore(3, function () {
     sprites.destroyAllSpritesOfKind(SpriteKind.Enemy)
     Level2_D()
@@ -176,7 +162,6 @@ info.onScore(5, function () {
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
     sprites.destroy(otherSprite)
     otherSprite.startEffect(effects.fire)
-    sprites.destroy(projectile)
     music.play(music.melodyPlayable(music.smallCrash), music.PlaybackMode.InBackground)
     info.changeScoreBy(1)
 })
@@ -195,7 +180,6 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
 let trash_1: Sprite = null
 let trash_2: Sprite = null
 let trash_3: Sprite = null
-let projectile: Sprite = null
 let myBoss: Sprite = null
 let currentLevel = 0
 let laser2: Sprite = null
@@ -228,11 +212,11 @@ story.startCutscene(function () {
         pause(2000)
         game.gameOver(true)
     }
-    story.cancelCurrentCutscene()
     color.FadeToBlack.startScreenEffect(1000)
     if (gameMode != true) {
-        Level1()
+        myLevel1()
     }
+    story.cancelAllCutscenes()
 })
 game.onUpdateInterval(2000, function () {
     if (gameMode == true) {
